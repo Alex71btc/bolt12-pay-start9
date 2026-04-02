@@ -27,7 +27,7 @@ export LNDK_TIMEOUT_SECONDS=30
 export ALLOW_PAY_OFFER=true
 
 # Direct LND REST fallback
-export LND_REST_URL=https://lnd:8080
+export LND_REST_URL=https://172.18.0.1:8080
 export LND_TLS_CERT_PATH=$LND_DIR/tls.cert
 export LND_MACAROON_PATH=$LND_DIR/admin.macaroon
 export LND_REST_INSECURE=true
@@ -59,7 +59,7 @@ echo "Starting LNDK background loop..."
 
     echo "Starting LNDK..."
     lndk \
-      --address=https://lnd:10009 \
+      --address=https://172.18.0.1:10009 \
       --cert-path="$LND_DIR/tls.cert" \
       --macaroon-path="$LND_DIR/admin.macaroon" \
       --data-dir=/data/lndk \
