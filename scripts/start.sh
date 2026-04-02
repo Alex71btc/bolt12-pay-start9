@@ -10,8 +10,9 @@ export SECRETS_JSON_PATH=/data/secrets.json
 
 export HOST=0.0.0.0
 export PORT=8081
+export PYTHONPATH=/app
 
 cd /app
 
 echo "Starting BOLT12 Pay on ${HOST}:${PORT}"
-exec python3 -m backend.app
+exec uvicorn backend.app:app --host "${HOST}" --port "${PORT}"
