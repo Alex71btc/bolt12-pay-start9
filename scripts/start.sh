@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-echo "START9 LNDK SCRIPT V3"
+echo "START9 LNDK SCRIPT V4"
 
 mkdir -p /data
 mkdir -p /data/lndk
@@ -22,14 +22,14 @@ export LNDK_NETWORK=bitcoin
 export LNDK_GRPC_HOST=https://127.0.0.1
 export LNDK_GRPC_PORT=7000
 export LNDK_CERT_PATH=/data/lndk/tls-cert.pem
-export LNDK_MACAROON_PATH=$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon
+export LNDK_MACAROON_PATH=$LND_DIR/admin.macaroon
 export LNDK_TIMEOUT_SECONDS=30
 export ALLOW_PAY_OFFER=true
 
 # Direct LND REST fallback
 export LND_REST_URL=https://lnd:8080
 export LND_TLS_CERT_PATH=$LND_DIR/tls.cert
-export LND_MACAROON_PATH=$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon
+export LND_MACAROON_PATH=$LND_DIR/admin.macaroon
 export LND_REST_INSECURE=true
 
 # LNURL defaults
@@ -42,17 +42,16 @@ export LNURL_DEFAULT_DESCRIPTION="Lightning payment"
 export LNURL_ALIAS_MAP=""
 
 echo "Checking binaries..."
-command -v lndk || true
-command -v lndk-cli || true
+command -v lndk
+command -v lndk-cli
 
 echo "Starting LNDK background loop..."
 (
   while true; do
     echo "Checking mounted LND files..."
     ls -l "$LND_DIR" || true
-    ls -l "$LND_DIR/data/chain/bitcoin/mainnet" || true
 
-    if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon" ]; then
+    if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/admin.macaroon" ]; then
       echo "Waiting for cert/macaroon..."
       sleep 5
       continue
@@ -62,7 +61,7 @@ echo "Starting LNDK background loop..."
     lndk \
       --address=https://lnd:10009 \
       --cert-path="$LND_DIR/tls.cert" \
-      --macaroon-path="$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon" \
+      --macaroon-path="$LND_DIR/admin.macaroon" \
       --data-dir=/data/lndk \
       --grpc-host=0.0.0.0 \
       --grpc-port=7000
