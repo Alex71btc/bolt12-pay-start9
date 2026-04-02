@@ -1,4 +1,4 @@
-id: bolt12-pay
+id: boltpay
 title: "BOLT12 Pay"
 version: 0.2.74.0
 release-notes: |
@@ -10,18 +10,14 @@ support-site: "https://github.com/Alex71btc/bolt12-pay-start9/issues"
 marketing-site: "https://github.com/Alex71btc/lndk-pay"
 build: ["make"]
 min-os-version: 0.3.5.1
-ui: false
 
 description:
   short: "Self-hosted Lightning payment server with BOLT12 support."
   long: |
     BOLT12 Pay is a self-hosted Lightning payment and identity server.
 
-    It is designed to work with your own node and provides:
-    - BOLT12 offers via LNDK
-    - LNURL and Lightning Address support
-    - BOLT11 fallback
-    - a simple web UI for self-hosted payment flows
+    It provides BOLT12 offers via LNDK, LNURL and Lightning Address support,
+    BOLT11 fallback, and a simple web UI for self-hosted payment flows.
 
 assets:
   license: LICENSE
@@ -37,32 +33,21 @@ main:
   mounts:
     main: /data
 
-hardware-requirements:
-  arch:
-    - aarch64
-
 health-checks:
   main:
     name: Web UI
     description: Checks whether the BOLT12 Pay web interface is responding.
     type: docker
     image: main
-    system: false
     entrypoint: scripts/healthcheck.sh
     args: []
-    mounts: {}
-    io-format: json
     inject: true
+    system: false
+    io-format: json
 
-config: null
+config: ~
 
-dependencies:
-  lnd:
-    version: ">=0.17.0"
-    critical: true
-    requirement:
-      type: required
-    description: "Provides the Lightning node used by BOLT12 Pay and LNDK."
+properties: ~
 
 volumes:
   main:
@@ -81,6 +66,15 @@ interfaces:
         internal: 8081
     ui: true
     protocols:
+      - tcp
       - http
+
+dependencies:
+  lnd:
+    version: ">=0.17.0 <0.21.0"
+    description: Used to communicate with the Lightning Network.
+    requirement:
+      type: required
+    config: ~
 
 actions: {}
