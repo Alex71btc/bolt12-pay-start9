@@ -1,4 +1,4 @@
-FROM alex71btc/lndk:stable-good-20260401 as lndkstage
+FROM alex71btc/lndk:start9-20260402 AS lndkstage
 
 FROM python:3.11-slim
 
