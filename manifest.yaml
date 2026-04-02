@@ -1,0 +1,98 @@
+id: bolt12-pay
+title: "BOLT12 Pay"
+version: "0.2.74.0"
+release-notes: |
+  Initial Start9 packaging for BOLT12 Pay.
+license: MIT
+wrapper-repo: "https://github.com/Alex71btc/bolt12-pay-start9"
+upstream-repo: "https://github.com/Alex71btc/lndk-pay"
+support-site: "https://github.com/Alex71btc/bolt12-pay-start9/issues"
+marketing-site: "https://github.com/Alex71btc/lndk-pay"
+build: ["make"]
+min-os-version: "0.3.5.1"
+
+description:
+  short: "Self-hosted Lightning payment server with BOLT12 support."
+  long: |
+    BOLT12 Pay is a self-hosted Lightning payment and identity server.
+
+    It is designed to work with your own node and provides:
+    - BOLT12 offers via LNDK
+    - LNURL and Lightning Address support
+    - BOLT11 fallback
+    - a simple web UI for self-hosted payment flows
+
+assets:
+  license: LICENSE
+  icon: assets/icon.png
+  instructions: INSTRUCTIONS.md
+
+main:
+  type: docker
+  image: main
+  entrypoint: docker_entrypoint.sh
+  args: []
+  mounts:
+    main: /data
+
+health-checks:
+  web:
+    name: Web UI
+    description: Checks whether the BOLT12 Pay web interface is responding.
+    type: docker
+    image: main
+    entrypoint: scripts/healthcheck.sh
+    args: []
+    inject: true
+    io-format: json
+
+config: null
+
+dependencies:
+  lnd:
+    version: ">=0.17.0"
+    critical: true
+    requirement:
+      type: required
+    description: "Provides the Lightning node used by BOLT12 Pay and LNDK."
+
+volumes:
+  main:
+    type: data
+
+interfaces:
+  main:
+    name: Web UI
+    description: Web interface for BOLT12 Pay
+    tor-config:
+      port-mapping:
+        80: "8081"
+    lan-config:
+      443:
+        ssl: true
+        internal: 8081
+    ui: true
+    protocols:
+      - http
+
+backup:
+  create:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: create-backup
+    args: []
+    mounts:
+      BACKUP: /mnt/backup
+      main: /data
+  restore:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: restore-backup
+    args: []
+    mounts:
+      BACKUP: /mnt/backup
+      main: /data
+
+actions: {}
