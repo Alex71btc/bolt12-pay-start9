@@ -45,6 +45,35 @@ health-checks:
     system: false
     io-format: json
 
+backup:
+  create:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - create
+      - /mnt/backup
+      - /data
+    mounts:
+      BACKUP: "/mnt/backup"
+      main: "/data"
+
+  restore:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - restore
+      - /mnt/backup
+      - /data
+    mounts:
+      BACKUP: "/mnt/backup"
+      main: "/data"
+
 config: ~
 
 properties: ~
