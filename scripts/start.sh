@@ -1,6 +1,6 @@
 #!/bin/sh
-echo "START9 LNDK SCRIPT V2"
 set -eu
+echo "START9 LNDK SCRIPT V2"
 
 mkdir -p /data
 mkdir -p /data/lndk
