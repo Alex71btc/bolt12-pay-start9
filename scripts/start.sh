@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-echo "START9 LNDK SCRIPT V2"
+echo "START9 LNDK SCRIPT V3"
 
 mkdir -p /data
 mkdir -p /data/lndk
@@ -41,23 +41,24 @@ export LNURL_SHARED_DESCRIPTION="LNURL payment"
 export LNURL_DEFAULT_DESCRIPTION="Lightning payment"
 export LNURL_ALIAS_MAP=""
 
-echo "Waiting for LND TLS + macaroon..."
-while [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon" ]; do
-  echo "Waiting for cert/macaroon..."
-  sleep 5
-done
-
 echo "Checking binaries..."
-command -v lndk
-command -v lndk-cli
+command -v lndk || true
+command -v lndk-cli || true
 
-echo "Checking mounted LND files..."
-ls -l "$LND_DIR" || true
-ls -l "$LND_DIR/data/chain/bitcoin/mainnet" || true
-
-echo "Starting LNDK with retry loop..."
+echo "Starting LNDK background loop..."
 (
   while true; do
+    echo "Checking mounted LND files..."
+    ls -l "$LND_DIR" || true
+    ls -l "$LND_DIR/data/chain/bitcoin/mainnet" || true
+
+    if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon" ]; then
+      echo "Waiting for cert/macaroon..."
+      sleep 5
+      continue
+    fi
+
+    echo "Starting LNDK..."
     lndk \
       --address=https://lnd:10009 \
       --cert-path="$LND_DIR/tls.cert" \
