@@ -1,6 +1,6 @@
 id: bolt12-pay
 title: "BOLT12 Pay"
-version: "0.2.74.0"
+version: 0.2.74.0
 release-notes: |
   Initial Start9 packaging for BOLT12 Pay.
 license: MIT
@@ -9,7 +9,8 @@ upstream-repo: "https://github.com/Alex71btc/lndk-pay"
 support-site: "https://github.com/Alex71btc/bolt12-pay-start9/issues"
 marketing-site: "https://github.com/Alex71btc/lndk-pay"
 build: ["make"]
-min-os-version: "0.3.5.1"
+min-os-version: 0.3.5.1
+ui: false
 
 description:
   short: "Self-hosted Lightning payment server with BOLT12 support."
@@ -26,6 +27,7 @@ assets:
   license: LICENSE
   icon: assets/icon.png
   instructions: INSTRUCTIONS.md
+  docker-images: image.tar
 
 main:
   type: docker
@@ -35,16 +37,22 @@ main:
   mounts:
     main: /data
 
+hardware-requirements:
+  arch:
+    - aarch64
+
 health-checks:
-  web:
+  main:
     name: Web UI
     description: Checks whether the BOLT12 Pay web interface is responding.
     type: docker
     image: main
+    system: false
     entrypoint: scripts/healthcheck.sh
     args: []
-    inject: true
+    mounts: {}
     io-format: json
+    inject: true
 
 config: null
 
@@ -74,3 +82,5 @@ interfaces:
     ui: true
     protocols:
       - http
+
+actions: {}
