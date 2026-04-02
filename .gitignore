@@ -1,0 +1,11 @@
+.DS_Store
+*.swp
+*.swo
+*~
+*.bak
+*.backup-*
+*.before-*
+*.safe
+.env
+dist/
+tmp/
