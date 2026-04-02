@@ -1,4 +1,5 @@
 #!/bin/sh
+echo "START9 LNDK SCRIPT V2"
 set -eu
 
 mkdir -p /data
