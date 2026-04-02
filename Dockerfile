@@ -1,3 +1,5 @@
+FROM alex71btc/lndk:stable-good-20260401 as lndkstage
+
 FROM python:3.11-slim
 
 USER root
@@ -25,10 +27,15 @@ COPY docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
 COPY scripts/start.sh /usr/local/bin/start.sh
 COPY scripts/healthcheck.sh /usr/local/bin/healthcheck.sh
 
-# optional if you want lndk-cli in web image later
-# COPY lndk-bin/lndk-cli /usr/local/bin/lndk-cli
+COPY --from=lndkstage /usr/local/bin/lndk /usr/local/bin/lndk
+COPY --from=lndkstage /usr/local/bin/lndk-cli /usr/local/bin/lndk-cli
 
-RUN chmod +x /usr/local/bin/docker_entrypoint.sh /usr/local/bin/start.sh /usr/local/bin/healthcheck.sh
+RUN chmod +x \
+    /usr/local/bin/docker_entrypoint.sh \
+    /usr/local/bin/start.sh \
+    /usr/local/bin/healthcheck.sh \
+    /usr/local/bin/lndk \
+    /usr/local/bin/lndk-cli
 
 RUN if [ -f /app/requirements.txt ]; then pip install --no-cache-dir -r /app/requirements.txt; fi
 

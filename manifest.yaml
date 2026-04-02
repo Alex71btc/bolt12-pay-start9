@@ -30,9 +30,7 @@ assets:
   license: LICENSE
   icon: assets/icon.png
   instructions: INSTRUCTIONS.md
-  docker-images:
-    main: image.tar
-    lndk: lndk-image.tar
+  docker-images: image.tar
 
 main:
   type: docker
