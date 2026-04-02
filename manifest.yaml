@@ -16,9 +16,8 @@ description:
   long: |
     BOLT12 Pay is a self-hosted Lightning payment and identity server.
 
-    This Start9 package runs:
-    - a BOLT12 Pay web service
-    - a separate LNDK backend service
+    This Start9 package runs BOLT12 Pay together with an embedded LNDK runtime
+    inside a single service container.
 
     Features include:
     - BOLT12 offers via LNDK
@@ -39,7 +38,7 @@ main:
   args: []
   mounts:
     main: /data
-    lnd: /lnd
+    lnd: /mnt/lnd
 
 health-checks:
   main:
@@ -79,8 +78,8 @@ backup:
       - /mnt/backup
       - /data
     mounts:
-      BACKUP: "/mnt/backup"
-      main: "/data"
+      BACKUP: /mnt/backup
+      main: /data
 
 config: ~
 
