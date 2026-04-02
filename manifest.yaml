@@ -2,7 +2,7 @@ id: bolt-pay
 title: "BOLT12 Pay"
 version: 0.2.74.0
 release-notes: |
-  Initial Start9 packaging for BOLT12 Pay.
+  Initial Start9 dual-service packaging for BOLT12 Pay with separate LNDK service.
 license: MIT
 wrapper-repo: "https://github.com/Alex71btc/bolt12-pay-start9"
 upstream-repo: "https://github.com/Alex71btc/lndk-pay"
@@ -16,14 +16,23 @@ description:
   long: |
     BOLT12 Pay is a self-hosted Lightning payment and identity server.
 
-    It provides BOLT12 offers via LNDK, LNURL and Lightning Address support,
-    BOLT11 fallback, and a simple web UI for self-hosted payment flows.
+    This Start9 package runs:
+    - a BOLT12 Pay web service
+    - a separate LNDK backend service
+
+    Features include:
+    - BOLT12 offers via LNDK
+    - LNURL and Lightning Address support
+    - BOLT11 fallback
+    - a simple web UI for self-hosted payment flows
 
 assets:
   license: LICENSE
   icon: assets/icon.png
   instructions: INSTRUCTIONS.md
-  docker-images: image.tar
+  docker-images:
+    main: image.tar
+    lndk: lndk-image.tar
 
 main:
   type: docker
@@ -32,6 +41,7 @@ main:
   args: []
   mounts:
     main: /data
+    lnd: /lnd
 
 health-checks:
   main:

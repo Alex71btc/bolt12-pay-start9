@@ -2,6 +2,7 @@ PKG_ID=bolt-pay
 PKG_VERSION=0.2.74.0
 
 PLATFORM ?= linux/arm64
+LNDK_IMAGE ?= alex71btc/lndk:stable-good-20260401
 
 all: pack
 
@@ -15,11 +16,15 @@ image.tar: Dockerfile docker_entrypoint.sh scripts/start.sh scripts/healthcheck.
 		-o type=docker,dest=image.tar \
 		.
 
-pack: scripts/embassy.js image.tar
+lndk-image.tar:
+	docker pull $(LNDK_IMAGE)
+	docker save $(LNDK_IMAGE) -o lndk-image.tar
+
+pack: scripts/embassy.js image.tar lndk-image.tar
 	start-sdk pack
 
 verify: pack
 	start-sdk verify s9pk $(PKG_ID).s9pk
 
 clean:
-	rm -f image.tar scripts/embassy.js $(PKG_ID).s9pk
+	rm -f image.tar lndk-image.tar scripts/embassy.js $(PKG_ID).s9pk
