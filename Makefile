@@ -1,4 +1,4 @@
-PKG_ID=boltpay
+PKG_ID=bolt-pay
 PKG_VERSION=0.2.74.0
 
 PLATFORM ?= linux/arm64
