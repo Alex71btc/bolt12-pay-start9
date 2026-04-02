@@ -1,13 +1,12 @@
 PKG_ID=bolt12-pay
 PKG_VERSION=0.2.74.0
 
-ARCH ?= aarch64
 PLATFORM ?= linux/arm64
 
 all: pack
 
 scripts/embassy.js: scripts/embassy.ts
-	deno bundle scripts/embassy.ts scripts/embassy.js
+	cp scripts/embassy.ts scripts/embassy.js
 
 image.tar: Dockerfile docker_entrypoint.sh scripts/start.sh scripts/healthcheck.sh scripts/embassy.ts
 	docker buildx build \
