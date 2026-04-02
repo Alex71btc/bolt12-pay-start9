@@ -9,3 +9,7 @@
 .env
 dist/
 tmp/
+upstream/
+image.tar
+*.s9pk
+scripts/embassy.js
