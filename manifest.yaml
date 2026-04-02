@@ -89,6 +89,12 @@ properties: ~
 volumes:
   main:
     type: data
+  lnd:
+    type: pointer
+    package-id: lnd
+    volume-id: main
+    path: /public
+    readonly: true
 
 interfaces:
   main:
