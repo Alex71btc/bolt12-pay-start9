@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-echo "START9 LNDK SCRIPT V4"
+echo "START9 LNDK SCRIPT V5"
 
 mkdir -p /data
 mkdir -p /data/lndk
@@ -16,6 +16,9 @@ export PORT=8081
 export PYTHONPATH=/app
 export LND_DIR=/mnt/lnd
 
+# IMPORTANT: Start9 LND listens on its container IP, not 172.18.0.1
+export LND_HOST=172.18.0.15
+
 # BOLT12 Pay -> local LNDK gRPC
 export LNDK_CLI=/usr/local/bin/lndk-cli
 export LNDK_NETWORK=bitcoin
@@ -27,7 +30,7 @@ export LNDK_TIMEOUT_SECONDS=30
 export ALLOW_PAY_OFFER=true
 
 # Direct LND REST fallback
-export LND_REST_URL=https://172.18.0.1:8080
+export LND_REST_URL=https://$LND_HOST:8080
 export LND_TLS_CERT_PATH=$LND_DIR/tls.cert
 export LND_MACAROON_PATH=$LND_DIR/admin.macaroon
 export LND_REST_INSECURE=true
@@ -57,9 +60,9 @@ echo "Starting LNDK background loop..."
       continue
     fi
 
-    echo "Starting LNDK..."
+    echo "Starting LNDK against $LND_HOST..."
     lndk \
-      --address=https://172.18.0.1:10009 \
+      --address=https://$LND_HOST:10009 \
       --cert-path="$LND_DIR/tls.cert" \
       --macaroon-path="$LND_DIR/admin.macaroon" \
       --data-dir=/data/lndk \
