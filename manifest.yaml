@@ -74,25 +74,3 @@ interfaces:
     ui: true
     protocols:
       - http
-
-backup:
-  create:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: create-backup
-    args: []
-    mounts:
-      BACKUP: /mnt/backup
-      main: /data
-  restore:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: restore-backup
-    args: []
-    mounts:
-      BACKUP: /mnt/backup
-      main: /data
-
-actions: {}
