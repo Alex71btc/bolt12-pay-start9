@@ -39,7 +39,7 @@ health-checks:
     description: Checks whether the BOLT12 Pay web interface is responding.
     type: docker
     image: main
-    entrypoint: scripts/healthcheck.sh
+    entrypoint: healthcheck.sh
     args: []
     inject: true
     system: false
