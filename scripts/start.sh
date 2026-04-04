@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
-echo "START9 LNDK SCRIPT V5"
+
+echo "START9 BOLT12 PAY SCRIPT"
 
 mkdir -p /data
 mkdir -p /data/lndk
@@ -14,28 +15,19 @@ export SECRETS_JSON_PATH=/data/config/secrets.json
 export HOST=0.0.0.0
 export PORT=8081
 export PYTHONPATH=/app
+
 export LND_DIR=/mnt/lnd
+export LND_HOST_CANDIDATE=lndbolt.embassy
 
-# IMPORTANT: Start9 LND listens on its container IP, not 172.18.0.1
-export LND_HOST=172.18.0.15
-
-# BOLT12 Pay -> local LNDK gRPC
 export LNDK_CLI=/usr/local/bin/lndk-cli
 export LNDK_NETWORK=bitcoin
 export LNDK_GRPC_HOST=https://127.0.0.1
 export LNDK_GRPC_PORT=7000
 export LNDK_CERT_PATH=/data/lndk/tls-cert.pem
-export LNDK_MACAROON_PATH=$LND_DIR/admin.macaroon
+export LNDK_MACAROON_PATH="$LND_DIR/admin.macaroon"
 export LNDK_TIMEOUT_SECONDS=30
 export ALLOW_PAY_OFFER=true
 
-# Direct LND REST fallback
-export LND_REST_URL=https://$LND_HOST:8080
-export LND_TLS_CERT_PATH=$LND_DIR/tls.cert
-export LND_MACAROON_PATH=$LND_DIR/admin.macaroon
-export LND_REST_INSECURE=true
-
-# LNURL defaults
 export LNURL_MIN_SENDABLE_MSAT=1000
 export LNURL_MAX_SENDABLE_MSAT=1000000000
 export LNURL_COMMENT_ALLOWED=120
@@ -47,6 +39,57 @@ export LNURL_ALIAS_MAP=""
 echo "Checking binaries..."
 command -v lndk
 command -v lndk-cli
+command -v curl
+
+echo "Checking mounted LND files..."
+ls -l "$LND_DIR" || true
+
+if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/admin.macaroon" ]; then
+  echo "Missing tls.cert or admin.macaroon in $LND_DIR"
+  sleep 10
+  exit 1
+fi
+
+detect_lnd_host() {
+  echo "Trying DNS host: ${LND_HOST_CANDIDATE}" >&2
+  if curl -ksS --connect-timeout 3 "https://${LND_HOST_CANDIDATE}:8080/v1/getinfo" >/dev/null 2>&1; then
+    printf '%s\n' "${LND_HOST_CANDIDATE}"
+    return 0
+  fi
+
+  echo "DNS host not reachable, scanning Docker subnet for LND..." >&2
+  python3 - <<'PY'
+import socket
+
+for i in range(2, 255):
+    host = f"172.18.0.{i}"
+    s = socket.socket()
+    s.settimeout(0.2)
+    try:
+        s.connect((host, 10009))
+        print(host)
+        break
+    except Exception:
+        pass
+    finally:
+        s.close()
+PY
+}
+
+LND_HOST="$(detect_lnd_host | tail -n 1)"
+
+if [ -z "${LND_HOST:-}" ]; then
+  echo "Could not detect reachable LND host"
+  sleep 10
+  exit 1
+fi
+
+echo "Using LND host: $LND_HOST"
+
+export LND_REST_URL="https://${LND_HOST}:8080"
+export LND_TLS_CERT_PATH="$LND_DIR/tls.cert"
+export LND_MACAROON_PATH="$LND_DIR/admin.macaroon"
+export LND_REST_INSECURE=true
 
 echo "Starting LNDK background loop..."
 (
@@ -55,14 +98,21 @@ echo "Starting LNDK background loop..."
     ls -l "$LND_DIR" || true
 
     if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/admin.macaroon" ]; then
-      echo "Waiting for cert/macaroon..."
+      echo "Waiting for cert/macaroon from lndbolt..."
       sleep 5
       continue
     fi
 
-    echo "Starting LNDK against $LND_HOST..."
+    echo "Waiting for LND REST to respond on ${LND_HOST}..."
+    if ! curl -ksS --connect-timeout 3 "${LND_REST_URL}/v1/getinfo" >/dev/null 2>&1; then
+      echo "LND REST not ready yet on ${LND_HOST}"
+      sleep 5
+      continue
+    fi
+
+    echo "Starting LNDK against ${LND_HOST}..."
     lndk \
-      --address=https://$LND_HOST:10009 \
+      --address="https://${LND_HOST}:10009" \
       --cert-path="$LND_DIR/tls.cert" \
       --macaroon-path="$LND_DIR/admin.macaroon" \
       --data-dir=/data/lndk \

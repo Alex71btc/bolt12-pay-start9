@@ -90,7 +90,7 @@ volumes:
     type: data
   lnd:
     type: pointer
-    package-id: lnd
+    package-id: lndbolt
     volume-id: main
     path: /public
     readonly: true
@@ -112,7 +112,7 @@ interfaces:
       - http
 
 dependencies:
-  lnd:
+  lndbolt:
     version: ">=0.17.0 <0.21.0"
     description: Used to communicate with the Lightning Network.
     requirement:
