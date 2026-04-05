@@ -514,6 +514,29 @@
 </div>
    <div class="sub" data-i18n="setup.subtitle">Grundkonfiguration für Public URL, Lightning-Adressen und DNS-Modus.</div>
 
+<div class="bolt12-start9-warning">
+  <div data-i18n="setup.start9.title" style="font-weight:700;margin-bottom:6px;">
+    ⚠️ Start9 Setup
+  </div>
+
+  <div data-i18n="setup.start9.text">
+    This app requires a BOLT12-enabled Lightning node:
+    <a href="https://github.com/Alex71btc/lnd-startos-bolt12" target="_blank" rel="noopener noreferrer" class="mono">
+      LND BOLT12
+    </a>
+  </div>
+
+  <div data-i18n="setup.start9.meta" style="margin-top:8px;">
+    App name in StartOS: <span class="mono">LND BOLT12</span><br>
+    Package ID: <span class="mono">lndbolt</span>
+  </div>
+
+  <div data-i18n="setup.start9.migration" style="margin-top:8px;">
+    Already running LND?<br>
+    → Open LND BOLT12<br>
+    → Actions → Import from Start9 LND
+  </div>
+</div>
     <section class="section">
       <label class="label" for="setupBolt12Address" data-i18n="setup.label.bolt12_address">Public BOLT12 Address</label>
       <input id="setupBolt12Address" type="text" data-i18n-placeholder="setup.ph.bolt12_address" placeholder="z. B. bolt12@pay.example.com" />
@@ -2023,6 +2046,10 @@ installBtn.addEventListener('click', async () => {
       "setup.security.text": "Wenn du diese App aus dem Internet erreichbar machst, schütze Admin-Routen mit Cloudflare Tunnel + Access oder einer vergleichbaren Zugriffskontrolle.",
       "setup.security.routes": "Empfohlen: <span class=\"mono\">/pay</span> und <span class=\"mono\">/pay-login</span> schützen, während notwendige öffentliche Payment-Endpunkte erreichbar bleiben.",
       "setup.security.link": "→ Setup-Anleitung öffnen (Cloudflare Access / Reverse Proxy)",
+      "setup.start9.title": "⚠️ Start9 Setup",
+      "setup.start9.text": "Diese App benötigt einen BOLT12-fähigen Lightning-Node: <a href=\"https://github.com/Alex71btc/lnd-startos-bolt12\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"mono\">LND BOLT12</a>",
+      "setup.start9.meta": "App-Name in StartOS: <span class=\"mono\">LND BOLT12</span><br>Paket-ID: <span class=\"mono\">lndbolt</span>",
+      "setup.start9.migration": "LND schon in Nutzung?<br>→ Öffne <span class=\"mono\">LND BOLT12</span><br>→ Actions → <span class=\"mono\">Import from Start9 LND</span>",
       "dns.none": "Keine",
       "dns.manual": "Manuell",
       "dns.cloudflare": "Cloudflare",
@@ -2116,6 +2143,10 @@ installBtn.addEventListener('click', async () => {
       "setup.security.text": "If you expose this app to the internet, protect admin routes with Cloudflare Tunnel + Access or an equivalent access-control layer.",
       "setup.security.routes": "Recommended: protect <span class=\"mono\">/pay</span> and <span class=\"mono\">/pay-login</span>, while keeping required public payment endpoints reachable.",
       "setup.security.link": "→ Open setup guide (Cloudflare Access / Reverse Proxy)",
+      "setup.start9.title": "⚠️ Start9 Setup",
+      "setup.start9.text": "This app requires a BOLT12-enabled Lightning node: <a href=\"https://github.com/Alex71btc/lnd-startos-bolt12\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"mono\">LND BOLT12</a>",
+      "setup.start9.meta": "App name in StartOS: <span class=\"mono\">LND BOLT12</span><br>Package ID: <span class=\"mono\">lndbolt</span>",
+      "setup.start9.migration": "Already running LND?<br>→ Open <span class=\"mono\">LND BOLT12</span><br>→ Actions → <span class=\"mono\">Import from Start9 LND</span>",
       "dns.none": "None",
       "dns.manual": "Manual",
       "dns.cloudflare": "Cloudflare",

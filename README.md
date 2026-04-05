@@ -1,28 +1,65 @@
-# BOLT12 Pay – Start9 Service
+# BOLT12 Pay – StartOS Service
 
-Start9 service packaging for BOLT12 Pay.
+Self-hosted Lightning payment and identity server with BOLT12 support for StartOS.
 
-## Goal
+## Requirement: LND BOLT12
 
-Package BOLT12 Pay as a Start9 service using an existing LND service on StartOS.
+BOLT12 Pay requires **LND BOLT12**.
 
-## Planned architecture
+- App name in StartOS: **LND BOLT12**
+- Package ID: `lndbolt`
 
-- Start9 dependency: Bitcoin Core
-- Start9 dependency: LND
-- BOLT12 Pay web service
-- LNDK support for BOLT12 offers and payments
+The default Start9 LND package does not support BOLT12 offers.
 
-## Repo structure
+LND BOLT12 repository:
+https://github.com/Alex71btc/lnd-startos-bolt12
 
-- `manifest.yaml` – service metadata
-- `docker-compose.yml` – service containers
-- `config.yaml` – Start9 config UI
-- `actions.yaml` – Start9 actions
-- `scripts/` – helper scripts
-- `assets/` – icon and related assets
-- `docker/` – optional custom Docker assets
+## Migration from official Start9 LND
 
-## Status
+Existing users of the standard Start9 LND can migrate safely to **LND BOLT12**.
 
-Initial repository structure created.
+In StartOS:
+
+1. Stop both:
+   - LND
+   - LND BOLT12
+
+2. Open **LND BOLT12**
+3. Run:
+   - Actions → Import from Start9 LND
+
+This preserves:
+- node identity
+- channels
+- funds
+
+Important:
+- never run both nodes with the same state at the same time
+- after migration, keep the old LND stopped or remove it
+
+## Features
+
+- BOLT12 Offers
+- LNURL and Lightning Address
+- BOLT11 fallback
+- Nostr Wallet Connect (NWC)
+- self-hosted web UI
+
+## Remote access
+
+Recommended FOSS Cloudflare Tunnel app for StartOS:
+https://github.com/remcoros/cloudflared-startos/releases
+
+Recommended setup:
+- expose BOLT12 Pay through the tunnel
+- protect /pay and /pay-login
+- keep public payment endpoints reachable
+
+## Build
+
+make clean
+make
+
+This generates:
+
+bolt-pay.s9pk
