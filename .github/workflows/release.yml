@@ -9,29 +9,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-
-      - name: Enable buildx
-        run: |
-          docker buildx create --use
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Install Start9 SDK
         run: |
           curl -sSL https://start9.com/install-sdk | bash
+          echo "$HOME/.startos/bin" >> $GITHUB_PATH
 
       - name: Build package
         run: |
           make clean
           make
 
-      - name: Upload artifact (debug)
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: s9pk
