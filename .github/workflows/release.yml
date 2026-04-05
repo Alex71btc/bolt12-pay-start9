@@ -1,0 +1,45 @@
+name: Build and Release Start9 Package
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+
+      - name: Enable buildx
+        run: |
+          docker buildx create --use
+
+      - name: Install Start9 SDK
+        run: |
+          curl -sSL https://start9.com/install-sdk | bash
+
+      - name: Build package
+        run: |
+          make clean
+          make
+
+      - name: Upload artifact (debug)
+        uses: actions/upload-artifact@v4
+        with:
+          name: s9pk
+          path: "*.s9pk"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "*.s9pk"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
