@@ -6,47 +6,39 @@ on:
       - "v*"
 
 jobs:
-  build:
+  BuildPackage:
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
 
     steps:
-      - name: Checkout repo
+      - name: Prepare StartOS SDK
+        uses: Start9Labs/sdk@v1
+
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Install Rust
+      - name: Build the service package
+        id: build
+        shell: bash
         run: |
-          curl https://sh.rustup.rs -sSf | sh -s -- -y
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
-      - name: Install Start9 SDK
-        run: |
-          git clone --depth 1 --recursive https://github.com/Start9Labs/start-os.git
-          cd start-os
-          git submodule update --init --recursive
-          make sdk
-          echo "$PWD/core/install/bin" >> $GITHUB_PATH
-          start-sdk --version
-
-      - name: Build package
-        run: |
-          make clean
+          git submodule update --init --recursive || true
+          start-sdk init
           make
+          PACKAGE_ID=$(yq -oy ".id" manifest.*)
+          echo "package_id=$PACKAGE_ID" >> $GITHUB_ENV
+          printf "\nSHA256SUM: $(sha256sum ${PACKAGE_ID}.s9pk)\n"
 
-      - name: Upload artifact
+      - name: Upload .s9pk artifact
         uses: actions/upload-artifact@v4
         with:
-          name: s9pk
-          path: "*.s9pk"
+          name: ${{ env.package_id }}.s9pk
+          path: ./${{ env.package_id }}.s9pk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: "*.s9pk"
+          files: ./${{ env.package_id }}.s9pk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
