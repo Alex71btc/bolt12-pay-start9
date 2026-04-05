@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BOLT12 Pay Login</title>
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <link rel="icon" type="image/png" href="/assets/icon.png" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #0b1220;
+      color: #eef2ff;
+      font-family: system-ui, sans-serif;
+      padding: 16px;
+    }
+    .card {
+      width: min(420px, calc(100vw - 32px));
+      background: #111827;
+      border: 1px solid #26324a;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #eef2ff;
+      margin-top: 8px;
+      margin-bottom: 14px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: none;
+      background: #f59e0b;
+      color: #111827;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:disabled {
+      opacity: .7;
+      cursor: wait;
+    }
+    .muted { opacity: .82; font-size: .95rem; margin-bottom: 16px; }
+    .error { color: #fca5a5; min-height: 24px; margin-top: 12px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <img src="/assets/icon.png" alt="Logo" style="width:48px;height:48px;border-radius:12px;">
+      <div>
+        <div style="font-size:1.25rem;font-weight:800;">⚡ BOLT12 Pay</div>
+        <div class="muted">Protected Pay Area</div>
+      </div>
+    </div>
+
+    <label for="password" id="passwordLabel">Password</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Enter password" />
+
+    <button id="loginBtn" type="button">Login</button>
+    <div id="msg" class="error"></div>
+  </main>
+
+  <script>
+    const loginBtn = document.getElementById("loginBtn");
+    const passwordEl = document.getElementById("password");
+    const msgEl = document.getElementById("msg");
+
+    async function doLogin() {
+      msgEl.textContent = "";
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Login...";
+
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          cache: "no-store",
+          body: JSON.stringify({ password: passwordEl.value || "" })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          msgEl.textContent = (typeof data.detail === "string" && data.detail)
+            || (typeof data.error === "string" && data.error)
+            || ((localStorage.getItem("app_lang") || "de") === "en"
+                ? "Invalid password"
+                : "Ungültiges Passwort");
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Login";
+          return;
+        }
+
+        const next = new URLSearchParams(window.location.search).get("next") || "/pay";
+        window.location.href = next;
+      } catch (err) {
+        msgEl.textContent = "Login request failed";
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login";
+      }
+    }
+
+    loginBtn.addEventListener("click", doLogin);
+    passwordEl.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") doLogin();
+    });
+  </script>
+
+<script>
+(function () {
+  if (window.__payLoginI18nInstalled) return;
+  window.__payLoginI18nInstalled = true;
+
+  function lang() {
+    return localStorage.getItem("app_lang") || "de";
+  }
+
+  const T = {
+    de: {
+      password_label: "Passwort",
+      password_ph: "Passwort eingeben",
+      login_btn: "Login",
+      empty_password: "Bitte Passwort eingeben.",
+      invalid_password: "Ungültiges Passwort"
+    },
+    en: {
+      password_label: "Password",
+      password_ph: "Enter password",
+      login_btn: "Login",
+      empty_password: "Please enter a password.",
+      invalid_password: "Invalid password"
+    }
+  };
+
+  function tx(key) {
+    const l = lang();
+    return (T[l] && T[l][key]) || T.de[key] || key;
+  }
+
+  function applyPayLoginI18n() {
+    const label = document.getElementById("passwordLabel");
+    const input = document.getElementById("password");
+    const btn = document.getElementById("loginBtn");
+
+    if (label) label.textContent = tx("password_label");
+    if (input) input.placeholder = tx("password_ph");
+    if (btn) btn.textContent = tx("login_btn");
+  }
+
+  function normalizeErrorMessage(msg) {
+    if (typeof msg !== "string") {
+      if (msg && typeof msg.detail === "string") {
+        msg = msg.detail;
+      } else if (msg && typeof msg.message === "string") {
+        msg = msg.message;
+      } else {
+        return tx("invalid_password");
+      }
+    }
+
+    const m = msg.trim();
+
+    if (
+      m === "[object Object]" ||
+      m === "Object object" ||
+      m === "undefined" ||
+      m === "null"
+    ) {
+      return tx("invalid_password");
+    }
+
+    if (
+      m === "Please enter a password." ||
+      m === "Bitte Passwort eingeben."
+    ) {
+      return tx("empty_password");
+    }
+
+    if (
+      m === "Invalid password" ||
+      m === "Ungültiges Passwort"
+    ) {
+      return tx("invalid_password");
+    }
+
+    return msg;
+  }
+
+  function patchErrorRendering() {
+    const errorEl = document.getElementById("error");
+    if (!errorEl) return;
+
+    const originalSetter = errorEl.__payLoginPatched;
+    if (originalSetter) return;
+    errorEl.__payLoginPatched = true;
+
+    const observer = new MutationObserver(() => {
+      const txt = (errorEl.textContent || "").trim();
+      if (!txt) return;
+      const fixed = normalizeErrorMessage(txt);
+      if (fixed !== txt) {
+        errorEl.textContent = fixed;
+      }
+    });
+
+    observer.observe(errorEl, { childList: true, characterData: true, subtree: true });
+  }
+
+  function patchLoginHandler() {
+    const btn = document.getElementById("loginBtn");
+    const passwordEl = document.getElementById("password");
+    const errorEl = document.getElementById("error");
+
+    if (!btn || !passwordEl || !errorEl) return;
+    if (btn.dataset.payLoginPatchBound === "1") return;
+    btn.dataset.payLoginPatchBound = "1";
+
+    btn.addEventListener("click", () => {
+      if (!(passwordEl.value || "").trim()) {
+        setTimeout(() => {
+          errorEl.textContent = tx("empty_password");
+        }, 0);
+      }
+    }, true);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    applyPayLoginI18n();
+    patchErrorRendering();
+    patchLoginHandler();
+  });
+
+  window.addEventListener("load", () => {
+    applyPayLoginI18n();
+    patchErrorRendering();
+    patchLoginHandler();
+  });
+
+  setTimeout(() => {
+    applyPayLoginI18n();
+    patchErrorRendering();
+    patchLoginHandler();
+  }, 0);
+})();
+</script>
+
+</body>
+</html>

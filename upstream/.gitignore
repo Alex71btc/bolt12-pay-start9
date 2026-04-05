@@ -1,0 +1,36 @@
+# Runtime data
+data/
+data/config.json
+data/config/secrets.json
+
+# Environment
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Dev / backups
+*.bak
+*.bak.*
+*.before*
+*.safe
+*~
+
+# Local tools
+devtools/
+
+# Temp html backups
+frontend/public/index.html.*
+
+# Misc
+patch_*.py
+
+backend/app.py.backup-*
+
+# local backup files
+*.before-*
+*.bak-*
+*.backup-*
+*.safe
