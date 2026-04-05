@@ -2,6 +2,19 @@
 
 Self-hosted Lightning payment and identity server with BOLT12 support for StartOS.
 
+## Installation
+
+This package is currently distributed via GitHub Releases only.
+
+Releases:
+https://github.com/Alex71btc/bolt12-pay-start9/releases
+
+⚠️ Important:
+- This package is **not available in the official Start9 Marketplace**
+- Installation currently requires **manual sideloading**
+- Use at your own risk
+- Make sure you understand how to back up and restore your node before testing on production systems
+
 ## Requirement: LND BOLT12
 
 BOLT12 Pay requires **LND BOLT12**.

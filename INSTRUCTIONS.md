@@ -9,7 +9,8 @@ BOLT12 Pay requires **LND BOLT12** on StartOS.
 
 The default Start9 LND package does not support BOLT12 offers.
 
-LND BOLT12 repository:
+LND BOLT12 package and repository:
+https://github.com/Alex71btc/lnd-startos-bolt12/releases/latest
 https://github.com/Alex71btc/lnd-startos-bolt12
 
 ## Migrate from official Start9 LND
@@ -61,3 +62,13 @@ For Zeus with LND REST:
 - BOLT12 Pay requires **LND BOLT12**, not the default Start9 LND
 - BOLT12 offers are provided through the LND BOLT12 + LNDK stack
 - LNURL and Lightning Address support are included in BOLT12 Pay
+
+## Installation
+
+This package is currently available only via GitHub Releases:
+
+https://github.com/Alex71btc/bolt12-pay-start9/releases
+
+⚠️ This is a sideload-only package.
+It is not available in the official Start9 Marketplace.
+Install and use at your own risk.
