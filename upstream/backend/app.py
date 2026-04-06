@@ -69,6 +69,65 @@ LND_REST_INSECURE = os.environ.get("LND_REST_INSECURE", "false").lower() in {"1"
 PAY_UI_PASSWORD = os.getenv("PAY_UI_PASSWORD", "").strip()
 PAY_UI_SESSION_TTL = int(os.getenv("PAY_UI_SESSION_TTL", "1800"))
 PAY_UI_COOKIE_NAME = "pay_session"
+PAY_UI_COOKIE_SECURE = os.getenv("PAY_UI_COOKIE_SECURE", "false").lower() in {"1", "true", "yes", "on"}
+
+# --- Login brute-force protection (minimal v2) ---
+LOGIN_RATE_LIMIT_WINDOW_SECONDS = int(os.getenv("LOGIN_RATE_LIMIT_WINDOW_SECONDS", "900"))
+LOGIN_MAX_FAILED_ATTEMPTS = int(os.getenv("LOGIN_MAX_FAILED_ATTEMPTS", "5"))
+LOGIN_LOCKOUT_SECONDS = int(os.getenv("LOGIN_LOCKOUT_SECONDS", "900"))
+LOGIN_FAILURE_DELAY_MS = int(os.getenv("LOGIN_FAILURE_DELAY_MS", "1200"))
+
+_LOGIN_FAILURES: dict[str, list[float]] = {}
+_LOGIN_LOCKOUTS: dict[str, float] = {}
+
+def _client_ip(request: StarletteRequest) -> str:
+    forwarded = request.headers.get("x-forwarded-for", "").strip()
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    if request.client and request.client.host:
+        return request.client.host
+    return "unknown"
+
+def _prune_login_state(now: float) -> None:
+    expired_lockouts = [ip for ip, until in _LOGIN_LOCKOUTS.items() if until <= now]
+    for ip in expired_lockouts:
+        _LOGIN_LOCKOUTS.pop(ip, None)
+
+    for ip in list(_LOGIN_FAILURES.keys()):
+        attempts = _LOGIN_FAILURES.get(ip, [])
+        attempts = [ts for ts in attempts if (now - ts) <= LOGIN_RATE_LIMIT_WINDOW_SECONDS]
+        if attempts:
+            _LOGIN_FAILURES[ip] = attempts
+        else:
+            _LOGIN_FAILURES.pop(ip, None)
+
+def _login_is_locked(ip: str) -> tuple[bool, int]:
+    now = time.time()
+    _prune_login_state(now)
+    until = _LOGIN_LOCKOUTS.get(ip)
+    if until and until > now:
+        return True, int(until - now)
+    return False, 0
+
+def _record_login_failure(ip: str) -> int:
+    now = time.time()
+    _prune_login_state(now)
+    attempts = _LOGIN_FAILURES.get(ip, [])
+    attempts.append(now)
+    _LOGIN_FAILURES[ip] = attempts
+    count = len(attempts)
+    if count >= LOGIN_MAX_FAILED_ATTEMPTS:
+        _LOGIN_LOCKOUTS[ip] = now + LOGIN_LOCKOUT_SECONDS
+    return count
+
+def _record_login_success(ip: str) -> None:
+    _LOGIN_FAILURES.pop(ip, None)
+    _LOGIN_LOCKOUTS.pop(ip, None)
+
+def _login_failure_delay(attempt_count: int) -> None:
+    factor = max(1, min(attempt_count, 5))
+    time.sleep((LOGIN_FAILURE_DELAY_MS * factor) / 1000.0)
+
 PAY_SESSIONS: dict[str, dict] = {}
 
 NWC_SESSION_TTL = int(os.getenv("NWC_SESSION_TTL", "180"))
@@ -3022,11 +3081,34 @@ def _pay_login_html() -> str:
 
         const data = await res.json();
 
-        if (!res.ok) {{
-          msgEl.textContent = data.detail || data.error || "Login failed";
-          return;
-        }}
+if (!res.ok) {{
+  // 🚨 Rate limit / brute-force lock
+  if (res.status === 429 && data.retry_after) {{
+    let remaining = data.retry_after;
 
+    msgEl.textContent = `Too many attempts. Try again in ${remaining}s`;
+
+    loginBtn.disabled = true;
+
+    const interval = setInterval(() => {{
+      remaining--;
+
+      if (remaining <= 0) {{
+        clearInterval(interval);
+        loginBtn.disabled = false;
+        msgEl.textContent = "";
+      }} else {{
+        msgEl.textContent = `Too many attempts. Try again in ${remaining}s`;
+      }}
+    }}, 1000);
+
+    return;
+  }}
+
+  // ❌ normal error
+  msgEl.textContent = data.detail || data.error || "Login failed";
+  return;
+}}
         window.location.href = "/pay";
       }} catch (err) {{
         msgEl.textContent = "Login request failed";
@@ -3109,13 +3191,29 @@ def pay_login_page(request: StarletteRequest):
 
 
 @app.post("/api/auth/login")
-def api_auth_login(payload: PayLoginRequest):
+def api_auth_login(payload: PayLoginRequest, request: StarletteRequest):
     if not _is_pay_ui_enabled():
         return JSONResponse({"ok": True, "disabled": True}, headers=_no_store_headers())
 
+    ip = _client_ip(request)
+    locked, remaining = _login_is_locked(ip)
+    if locked:
+        return JSONResponse(
+            {
+                "ok": False,
+                "error": "Too many login attempts. Please try again later.",
+                "retry_after": remaining,
+            },
+            status_code=429,
+            headers=_no_store_headers(),
+        )
+
     if not _verify_ui_password(payload.password or ""):
+        attempts = _record_login_failure(ip)
+        _login_failure_delay(attempts)
         raise HTTPException(status_code=401, detail="Invalid password")
 
+    _record_login_success(ip)
     token = _create_pay_session()
 
     resp = JSONResponse({"ok": True}, headers=_no_store_headers())
@@ -3124,7 +3222,7 @@ def api_auth_login(payload: PayLoginRequest):
         value=token,
         max_age=PAY_UI_SESSION_TTL,
         httponly=True,
-        secure=False,
+        secure=PAY_UI_COOKIE_SECURE,
         samesite="strict",
         path="/",
     )

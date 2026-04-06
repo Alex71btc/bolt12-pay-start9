@@ -36,6 +36,8 @@ export LNURL_SHARED_DESCRIPTION="LNURL payment"
 export LNURL_DEFAULT_DESCRIPTION="Lightning payment"
 export LNURL_ALIAS_MAP=""
 
+export PAY_UI_COOKIE_SECURE=true
+
 echo "Checking binaries..."
 command -v lndk
 command -v lndk-cli
