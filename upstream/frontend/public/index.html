@@ -1776,7 +1776,10 @@ document.addEventListener('click', function (e) {
       try {
         const response = await fetch('/api/create-offer', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': getCookie('csrf_token')
+      },
           body: JSON.stringify(payload)
         });
 
