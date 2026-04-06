@@ -128,12 +128,34 @@ def _login_failure_delay(attempt_count: int) -> None:
     factor = max(1, min(attempt_count, 5))
     time.sleep((LOGIN_FAILURE_DELAY_MS * factor) / 1000.0)
 
+
 PAY_SESSIONS: dict[str, dict] = {}
 
 NWC_SESSION_TTL = int(os.getenv("NWC_SESSION_TTL", "180"))
 NWC_COOKIE_NAME = "nwc_session"
 NWC_SESSIONS: dict[str, dict] = {}
 
+# --- Cloudflare rate limiting ---
+CLOUDFLARE_RATE_LIMIT_WINDOW_SECONDS = int(os.getenv("CLOUDFLARE_RATE_LIMIT_WINDOW_SECONDS", "60"))
+CLOUDFLARE_RATE_LIMIT_MAX_REQUESTS = int(os.getenv("CLOUDFLARE_RATE_LIMIT_MAX_REQUESTS", "5"))
+
+_CLOUDFLARE_RATE_LIMITS: dict[str, list[float]] = {}
+
+def _check_cloudflare_rate_limit(request: StarletteRequest):
+    ip = _client_ip(request)
+    now = time.time()
+
+    attempts = _CLOUDFLARE_RATE_LIMITS.get(ip, [])
+    attempts = [ts for ts in attempts if (now - ts) <= CLOUDFLARE_RATE_LIMIT_WINDOW_SECONDS]
+    attempts.append(now)
+    _CLOUDFLARE_RATE_LIMITS[ip] = attempts
+
+    if len(attempts) > CLOUDFLARE_RATE_LIMIT_MAX_REQUESTS:
+        retry_after = max(1, int(CLOUDFLARE_RATE_LIMIT_WINDOW_SECONDS - (now - attempts[0])))
+        raise HTTPException(
+            status_code=429,
+            detail=f"Rate limit exceeded. Try again in {retry_after}s."
+        )
 
 def _hash_password(password: str) -> str:
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
@@ -2307,7 +2329,9 @@ async def pay_lnurl(payload: PayLnurlRequest) -> PayOfferResponse:
     )
 
 @app.post("/api/cloudflare/create-bip353")
-async def create_cloudflare_bip353(req: CloudflareBIP353Request):
+async def create_cloudflare_bip353(req: CloudflareBIP353Request, request: StarletteRequest):
+    _require_csrf(request)
+    _check_cloudflare_rate_limit(request)
     record_name = req.record_name.strip().lower()
     if not record_name:
         raise HTTPException(status_code=400, detail="record_name required")
