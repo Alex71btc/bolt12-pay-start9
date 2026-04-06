@@ -2072,9 +2072,9 @@ def set_setup_config(payload: dict):
 
     return {"ok": True}
 @app.post("/api/create-offer", response_model=OfferResponse)
-def create_offer(payload: OfferRequest) -> OfferResponse:
+def create_offer(payload: OfferRequest, request: StarletteRequest) -> OfferResponse:
+    _require_csrf(request)
     return _create_offer_internal(payload)
-
 
 @app.post("/api/decode-offer", response_model=DecodeResponse)
 def decode_offer(payload: DecodeRequest) -> DecodeResponse:
@@ -2085,7 +2085,8 @@ def decode_offer(payload: DecodeRequest) -> DecodeResponse:
 
 
 @app.post("/api/pay-offer", response_model=PayOfferResponse)
-def pay_offer(payload: PayOfferRequest) -> PayOfferResponse:
+def pay_offer(payload: PayOfferRequest, request: StarletteRequest) -> PayOfferResponse:
+    _require_csrf(request)
     if not ALLOW_PAY_OFFER:
         raise HTTPException(status_code=403, detail="pay-offer endpoint is disabled")
 
@@ -2098,7 +2099,8 @@ def pay_offer(payload: PayOfferRequest) -> PayOfferResponse:
     raw_output = _run_command(args)
     return PayOfferResponse(resolved_offer=normalized_offer, raw_output=raw_output)
 @app.post("/api/pay-address", response_model=PayOfferResponse)
-async def pay_address(payload: PayAddressRequest) -> PayOfferResponse:
+async def pay_address(payload: PayAddressRequest, request: StarletteRequest) -> PayOfferResponse:
+    _require_csrf(request)
     target = payload.target.strip()
     if not target:
         raise HTTPException(status_code=400, detail="target required")
@@ -2426,6 +2428,7 @@ def update_alias(name: str, payload: AliasUpdateRequest):
 async def create_invoice(payload: CreateInvoiceRequest, request: StarletteRequest) -> CreateInvoiceResponse:
     if _is_pay_ui_enabled() and not _is_pay_session_valid(request):
         raise HTTPException(status_code=401, detail="Authentication required")
+    _require_csrf(request)
     result = await _create_bolt11_invoice(
         amount_sat=payload.amount_sat,
         memo=payload.memo,
@@ -2913,6 +2916,15 @@ def _get_pay_session_token(request: StarletteRequest) -> Optional[str]:
     return request.cookies.get(PAY_UI_COOKIE_NAME)
 
 
+
+
+def _require_csrf(request: StarletteRequest):
+    csrf_cookie = request.cookies.get("csrf_token")
+    csrf_header = request.headers.get("x-csrf-token")
+
+    if not csrf_cookie or not csrf_header or csrf_cookie != csrf_header:
+        raise HTTPException(status_code=403, detail="CSRF validation failed")
+
 def _is_pay_session_valid(request: StarletteRequest) -> bool:
     _cleanup_pay_sessions()
     token = _get_pay_session_token(request)
@@ -3217,6 +3229,15 @@ def api_auth_login(payload: PayLoginRequest, request: StarletteRequest):
     token = _create_pay_session()
 
     resp = JSONResponse({"ok": True}, headers=_no_store_headers())
+    csrf_token = secrets.token_hex(16)
+    resp.set_cookie(
+        key="csrf_token",
+        value=csrf_token,
+        httponly=False,
+        secure=PAY_UI_COOKIE_SECURE,
+        samesite="strict",
+        path="/",
+    )
     resp.set_cookie(
         key=PAY_UI_COOKIE_NAME,
         value=token,

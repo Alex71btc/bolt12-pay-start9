@@ -909,6 +909,12 @@
       }
     }
 
+function getCookie(name) {
+  return document.cookie.split("; ")
+    .find(row => row.startsWith(name + "="))
+    ?.split("=")[1];
+}
+
     // ------------------------------------------------------------------
     // State and display helpers
     // ------------------------------------------------------------------
@@ -1503,7 +1509,10 @@ function renderAliasList(items) {
       try {
         const response = await fetch('/api/create-invoice', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': getCookie('csrf_token')
+          },
           body: JSON.stringify({
             amount_sat: Number(amountValue),
             memo: memoValue,
