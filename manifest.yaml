@@ -92,7 +92,7 @@ volumes:
     type: pointer
     package-id: lndbolt
     volume-id: main
-    path: /public
+    path: /
     readonly: true
 
 interfaces:

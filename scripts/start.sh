@@ -24,7 +24,7 @@ export LNDK_NETWORK=bitcoin
 export LNDK_GRPC_HOST=https://127.0.0.1
 export LNDK_GRPC_PORT=7000
 export LNDK_CERT_PATH=/data/lndk/tls-cert.pem
-export LNDK_MACAROON_PATH="$LND_DIR/admin.macaroon"
+export LNDK_MACAROON_PATH="$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon"
 export LNDK_TIMEOUT_SECONDS=30
 export ALLOW_PAY_OFFER=true
 
@@ -44,7 +44,7 @@ command -v curl
 echo "Checking mounted LND files..."
 ls -l "$LND_DIR" || true
 
-if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/admin.macaroon" ]; then
+if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon" ]; then
   echo "Missing tls.cert or admin.macaroon in $LND_DIR"
   sleep 10
   exit 1
@@ -88,7 +88,7 @@ echo "Using LND host: $LND_HOST"
 
 export LND_REST_URL="https://${LND_HOST}:8080"
 export LND_TLS_CERT_PATH="$LND_DIR/tls.cert"
-export LND_MACAROON_PATH="$LND_DIR/admin.macaroon"
+export LND_MACAROON_PATH="$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon"
 export LND_REST_INSECURE=true
 
 echo "Starting LNDK background loop..."
@@ -97,7 +97,7 @@ echo "Starting LNDK background loop..."
     echo "Checking mounted LND files..."
     ls -l "$LND_DIR" || true
 
-    if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/admin.macaroon" ]; then
+    if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon" ]; then
       echo "Waiting for cert/macaroon from lndbolt..."
       sleep 5
       continue
@@ -114,7 +114,7 @@ echo "Starting LNDK background loop..."
     lndk \
       --address="https://${LND_HOST}:10009" \
       --cert-path="$LND_DIR/tls.cert" \
-      --macaroon-path="$LND_DIR/admin.macaroon" \
+      --macaroon-path="$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon" \
       --data-dir=/data/lndk \
       --grpc-host=0.0.0.0 \
       --grpc-port=7000
