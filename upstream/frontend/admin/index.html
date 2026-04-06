@@ -872,12 +872,12 @@ main.card .headerRow {
   </div>
 
   <script>
-
 function getCookie(name) {
   return document.cookie.split("; ")
     .find(row => row.startsWith(name + "="))
     ?.split("=")[1];
 }
+
 
     const HISTORY_KEY = 'bolt12_admin_history_v1';
     const DEFAULT_ADDRESS = 'bolt12@alex71btc.com';
@@ -1152,13 +1152,11 @@ function startNwcAutoLock(seconds) {
       if (btn) btn.disabled = true;
 
       try {
-        const response = await fetch('/api/create-offer', {
+        const res = await fetch('/api/admin/nwc/unlock', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': getCookie('csrf_token')
-          },
-          body: JSON.stringify(payload)
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ password }),
         });
 
         const data = await res.json();
@@ -2284,20 +2282,19 @@ if (action === 'show-qr') {
       btn.innerHTML = `<span data-i18n="btn.create_busy">${window.__t('btn.create_busy')}</span>`;
       setStatus(window.__t('toast.create_start'), 'warn');
 
-try {
-  const response = await fetch('/api/create-offer', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': getCookie('csrf_token')
-    },
-    body: JSON.stringify(payload)
-  });
+      try {
+        const response = await fetch('/api/create-offer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': getCookie('csrf_token')
+          },
+          body: JSON.stringify(payload)
+        });
 
-  const data = await readJsonOrThrow(response);
+        const data = await readJsonOrThrow(response);
 
-  setCurrentOffer(data.offer);
-
+        setCurrentOffer(data.offer);
         renderOfferQr(data.offer);
 
         const amountText = amountValue ? `${amountValue} sats min` : '1 sat default';
@@ -2381,7 +2378,7 @@ async function payBolt12Flow() {
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-Token': getCookie('csrf_token')
-     },
+      },
       body: JSON.stringify(payload)
     });
 
