@@ -1,22 +1,22 @@
 id: bolt-pay
 title: "BOLT12 Pay"
-version: 0.2.79
+version: 0.2.79.0
 release-notes: |
-  Initial Start9 dual-service packaging for BOLT12 Pay with separate LNDK service.
+  Initial StartOS service packaging for BOLT12 Pay with separate LNDK service.
 license: MIT
+
+developer: "Alex71btc (https://github.com/Alex71btc)"
 wrapper-repo: "https://github.com/Alex71btc/bolt12-pay-start9"
 upstream-repo: "https://github.com/Alex71btc/lndk-pay"
 support-site: "https://github.com/Alex71btc/bolt12-pay-start9/issues"
 marketing-site: "https://github.com/Alex71btc/lndk-pay"
 build: ["make"]
-min-os-version: 0.3.5.1
-
 description:
   short: "Self-hosted Lightning payment server with BOLT12 support."
   long: |
     BOLT12 Pay is a self-hosted Lightning payment and identity server.
 
-    This Start9 package runs BOLT12 Pay together with an embedded LNDK runtime
+    This StartOS package runs BOLT12 Pay together with an embedded LNDK runtime
     inside a single service container.
 
     Features include:
@@ -28,8 +28,7 @@ description:
 assets:
   license: LICENSE
   icon: assets/icon.png
-  instructions: INSTRUCTIONS.md
-  docker-images: image.tar
+  instructions: instructions.md
 
 main:
   type: docker
@@ -43,54 +42,27 @@ main:
 health-checks:
   main:
     name: Web UI
-    description: Checks whether the BOLT12 Pay web interface is responding.
-    type: docker
-    image: main
-    entrypoint: healthcheck.sh
-    args: []
-    inject: true
-    system: false
-    io-format: json
+    success-message: BOLT12 Pay is ready to be visited in a web browser
+    type: script
 
 backup:
   create:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: compat
-    args:
-      - duplicity
-      - create
-      - /mnt/backup
-      - /data
-    mounts:
-      BACKUP: "/mnt/backup"
-      main: "/data"
-
+    type: script
   restore:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: compat
-    args:
-      - duplicity
-      - restore
-      - /mnt/backup
-      - /data
-    mounts:
-      BACKUP: /mnt/backup
-      main: /data
+    type: script
 
-config: ~
-
-properties: ~
+config:
+  get:
+    type: script
+  set:
+    type: script
 
 volumes:
   main:
     type: data
   lnd:
     type: pointer
-    package-id: lndbolt
+    package-id: lnd
     volume-id: main
     path: /
     readonly: true
@@ -112,8 +84,8 @@ interfaces:
       - http
 
 dependencies:
-  lndbolt:
-    version: ">=0.17.0 <0.21.0"
+  lnd:
+    version: ">=0.20.0 <0.22.0"
     description: Used to communicate with the Lightning Network.
     requirement:
       type: required
