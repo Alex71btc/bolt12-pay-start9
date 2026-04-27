@@ -17,7 +17,7 @@ export PORT=8081
 export PYTHONPATH=/app
 
 export LND_DIR=/mnt/lnd
-export LND_HOST_CANDIDATE=lndbolt.embassy
+export LND_HOST_CANDIDATE=lnd.startos
 
 export LNDK_CLI=/usr/local/bin/lndk-cli
 export LNDK_NETWORK=bitcoin
@@ -100,7 +100,7 @@ echo "Starting LNDK background loop..."
     ls -l "$LND_DIR" || true
 
     if [ ! -f "$LND_DIR/tls.cert" ] || [ ! -f "$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon" ]; then
-      echo "Waiting for cert/macaroon from lndbolt..."
+      echo "Waiting for cert/macaroon from lnd..."
       sleep 5
       continue
     fi
