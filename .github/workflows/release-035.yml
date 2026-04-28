@@ -3,7 +3,7 @@ name: Build and Release Start9 Package
 on:
   push:
     tags:
-      - "v*"
+      - "v*-startos035-*"
 
 jobs:
   BuildPackage:
