@@ -32,9 +32,8 @@ jobs:
 
       - name: Install start-cli
         run: |
-          curl -L https://github.com/Start9Labs/start-os/releases/download/v0.4.0-beta.3/start-cli-x86_64-unknown-linux-gnu -o start-cli
-          chmod +x start-cli
-          sudo mv start-cli /usr/local/bin/start-cli
+          curl -fsSL https://start9.com/install/start-cli | bash
+          export PATH="$HOME/.startos/bin:$PATH"
           start-cli --version
 
       - name: Build package
