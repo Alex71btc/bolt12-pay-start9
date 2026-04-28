@@ -37,6 +37,9 @@ jobs:
           sudo mv start-cli /usr/local/bin/start-cli
           start-cli --version
 
+      - name: Initialize developer key
+        run: start-cli init-key
+
       - name: Build package
         run: make x86
 
