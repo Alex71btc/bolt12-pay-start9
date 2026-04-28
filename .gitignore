@@ -13,3 +13,8 @@ upstream/
 image.tar
 *.s9pk
 scripts/embassy.js
+docker-images/
+javascript/
+node_modules/
+*.bak*
+*.s9pk
