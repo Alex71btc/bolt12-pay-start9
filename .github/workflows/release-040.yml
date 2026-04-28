@@ -16,9 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare StartOS SDK
-        uses: Start9Labs/sdk@v1
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -28,7 +25,7 @@ jobs:
           node-version: "22"
 
       - name: Install JS dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build StartOS JS
         run: ./node_modules/.bin/ncc build startos/index.ts -o javascript
@@ -42,6 +39,12 @@ jobs:
 
       - name: Initialize developer key
         run: start-cli init-key
+
+      - name: Install package tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y squashfs-tools-ng
+          which tar2sqfs
 
       - name: Build package
         run: make verify
