@@ -1,11 +1,11 @@
 import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.2.116:0',
+  version: '0.2.116:1',
 
   releaseNotes: {
     en_US:
-      'Fixes RouterRPC payments on LND 0.21 by applying a default fee limit only when using the RouterRPC payment endpoint, restoring compatibility with both LND 0.20.x and LND 0.21.x. Also adds automatic detection of native Onion Messaging support in LND 0.21+, displaying a native status message instead of legacy setup instructions when available.',
+      'Minor follow-up release. Adds copy-to-clipboard support for Last Payment Result output, fixes LNURL payment success messages not respecting the selected UI language, and includes small documentation and setup instruction improvements. Also includes automatic native Onion Messaging detection for LND 0.21+ and maintains compatibility with both LND 0.20.x and LND 0.21.x.',
   },
 
   migrations: {
