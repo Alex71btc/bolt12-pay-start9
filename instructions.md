@@ -2,7 +2,7 @@
 
 ## Documentation
 
-* [lndk-pay on GitHub](https://github.com/Alex71btc/lndk-pay) — the upstream project.
+* [lndk-pay on GitHub](https://github.com/Alex71btc/lndk-pay#-bolt12-pay) — the upstream project.
 * [LNDK](https://github.com/lndk-org/lndk) — the BOLT12 runtime BOLT12 Pay embeds.
 
 ## What you get on StartOS
