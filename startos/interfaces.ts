@@ -1,15 +1,15 @@
 import { sdk } from './sdk'
-import { uiPort } from './utils'
+import { uiHostId, uiInterfaceId, uiPort } from './utils'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
-  const uiMulti = sdk.MultiHost.of(effects, 'main')
+  const uiMulti = sdk.MultiHost.of(effects, uiHostId)
   const uiMultiOrigin = await uiMulti.bindPort(uiPort, {
     protocol: 'http',
   })
 
   const ui = sdk.createInterface(effects, {
     name: 'Web UI',
-    id: 'ui',
+    id: uiInterfaceId,
     description: 'The web interface of BOLT12 Pay',
     type: 'ui',
     masked: false,

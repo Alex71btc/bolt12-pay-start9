@@ -16,13 +16,13 @@ export HOST=0.0.0.0
 export PORT=8081
 export PYTHONPATH=/app
 
-# LND is a required StartOS dependency, reachable at lnd.startos. Its data
-# directory (TLS cert + macaroons) is mounted read-only at /mnt/lnd.
+# LND is a required StartOS dependency, reached over the StartOS LXC bridge.
+# LND_REST_URL (REST) and LND_GRPC_ADDRESS (gRPC) are injected by the StartOS
+# service — its `lnd.startos` DNS name is gone. Its data directory (TLS cert +
+# macaroons) is mounted read-only at /mnt/lnd.
 export LND_DIR=/mnt/lnd
-export LND_HOST=lnd.startos
 export LND_TLS_CERT_PATH="$LND_DIR/tls.cert"
 export LND_MACAROON_PATH="$LND_DIR/data/chain/bitcoin/mainnet/admin.macaroon"
-export LND_REST_URL="https://${LND_HOST}:8080"
 export LND_REST_INSECURE=true
 
 export LNDK_CLI=/usr/local/bin/lndk-cli
@@ -55,18 +55,18 @@ while [ ! -f "$LND_TLS_CERT_PATH" ] || [ ! -f "$LND_MACAROON_PATH" ]; do
   sleep 5
 done
 
-echo "Starting LNDK background loop against ${LND_HOST}..."
+echo "Starting LNDK background loop against ${LND_GRPC_ADDRESS}..."
 (
   while true; do
     if ! curl -ksS --connect-timeout 3 "${LND_REST_URL}/v1/getinfo" >/dev/null 2>&1; then
-      echo "LND REST not ready yet on ${LND_HOST}, retrying..."
+      echo "LND REST not ready yet at ${LND_REST_URL}, retrying..."
       sleep 5
       continue
     fi
 
-    echo "Starting LNDK against ${LND_HOST}..."
+    echo "Starting LNDK against ${LND_GRPC_ADDRESS}..."
     lndk \
-      --address="https://${LND_HOST}:10009" \
+      --address="${LND_GRPC_ADDRESS}" \
       --cert-path="$LND_TLS_CERT_PATH" \
       --macaroon-path="$LND_MACAROON_PATH" \
       --data-dir=/data/lndk \
