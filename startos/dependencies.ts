@@ -43,7 +43,7 @@ export const setDependencies = sdk.setupDependencies(async ({ effects }) => {
   return {
     lnd: {
       kind: 'running',
-      versionRange: '>=0.20.1-beta:12',
+      versionRange: '>=0.21.1-beta:4',
       healthChecks: ['lnd'],
     },
   }
