@@ -103,9 +103,9 @@ Pick one of the service's non-local URLs (use a **clearnet or custom-domain** UR
 
 **Supports LND 0.20 and 0.21** (`>=0.20.1-beta:12`). BOLT12 offers need onion-message support, and how it is obtained depends on the LND version — so `startos/dependencies.ts` reads LND's installed version and posts the Auto-Configure task only where it is needed:
 
-| Installed LND  | Onion messages                        | Auto-Configure task                                     |
-| -------------- | ------------------------------------- | ------------------------------------------------------- |
-| `>=0.21.0-beta:0` | Advertised natively (feature bit 39)  | Not posted; cleared if one already exists               |
+| Installed LND     | Onion messages                                        | Auto-Configure task                                           |
+| ----------------- | ----------------------------------------------------- | ------------------------------------------------------------- |
+| `>=0.21.0-beta:0` | Advertised natively (feature bit 39)                  | Not posted; cleared if one already exists                     |
 | `<0.21.0-beta:0`  | Require the `protocol.custom-*` entries in `lnd.conf` | Posted as `critical` against LND's hidden `autoconfig` action |
 
 Setting the `protocol.custom-*` entries on LND 0.21 is not merely redundant — LND aborts server creation (`feature bit: 39 already set`) and crash-loops. The version is read with `sdk.getServiceManifest(...).const()`, so upgrading LND from 0.20 to 0.21 re-runs init and clears the task instead of stranding the user with a critical task they cannot satisfy.
