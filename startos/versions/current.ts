@@ -1,28 +1,38 @@
 import { VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.3.0:7',
+  version: '0.3.1:0',
 
   releaseNotes: {
-    en_US: `Fixes BIP353 resolution on StartOS 0.4.x by using the system DNS resolver instead of hardcoded public DNS servers.
+    en_US: `Introduces Contacts for reusable Lightning payment destinations, including Lightning Address, BOLT12 Offer, LNURL, BIP353, Nostr and Node ID contacts.
 
-Also improves Lightning Address fallback handling so temporary DNS transport failures correctly fall back to LNURL. Verified on Docker, Umbrel and StartOS.`,
+Adds outgoing Keysend payments, automatic contact matching in Lightning Activity, full-history transaction search, paginated history loading, improved payment metadata handling, and numerous UI refinements.
 
-    es_ES: `Corrige la resolución BIP353 en StartOS 0.4.x utilizando el resolvedor DNS del sistema en lugar de servidores DNS públicos configurados de forma fija.
+Existing application data and payment history are preserved. No manual migration is required.`,
 
-También mejora el mecanismo de respaldo para Lightning Address, de modo que los fallos temporales de transporte DNS vuelvan correctamente a LNURL. Verificado en Docker, Umbrel y StartOS.`,
+    es_ES: `Introduce Contactos para destinos de pago Lightning reutilizables, incluyendo Lightning Address, BOLT12 Offer, LNURL, BIP353, Nostr y Node ID.
 
-    de_DE: `Behebt die BIP353-Auflösung unter StartOS 0.4.x durch Verwendung des systemeigenen DNS-Resolvers anstelle fest eingetragener öffentlicher DNS-Server.
+Añade pagos Keysend salientes, asociación automática de contactos en Lightning Activity, búsqueda en todo el historial de transacciones, carga paginada del historial, mejoras en los metadatos de pago y numerosos ajustes de interfaz.
 
-Verbessert außerdem den Fallback für Lightning Addresses, sodass bei temporären DNS-Transportfehlern korrekt auf LNURL zurückgegriffen wird. Verifiziert unter Docker, Umbrel und StartOS.`,
+Los datos existentes de la aplicación y el historial de pagos se conservan. No se requiere migración manual.`,
 
-    pl_PL: `Naprawia rozwiązywanie BIP353 w StartOS 0.4.x poprzez użycie systemowego resolvera DNS zamiast na stałe skonfigurowanych publicznych serwerów DNS.
+    de_DE: `Führt Kontakte für wiederverwendbare Lightning-Zahlungsziele ein, darunter Lightning Address, BOLT12 Offer, LNURL, BIP353, Nostr und Node ID.
 
-Poprawia również mechanizm awaryjny Lightning Address, dzięki czemu tymczasowe błędy transportu DNS prawidłowo przechodzą na LNURL. Zweryfikowano na Dockerze, Umbrel i StartOS.`,
+Fügt ausgehende Keysend-Zahlungen, automatische Kontaktzuordnung in Lightning Activity, Suche über den gesamten Transaktionsverlauf, paginiertes Nachladen der Historie, verbesserte Zahlungsmetadaten und zahlreiche UI-Verbesserungen hinzu.
 
-    fr_FR: `Corrige la résolution BIP353 sur StartOS 0.4.x en utilisant le résolveur DNS du système au lieu de serveurs DNS publics codés en dur.
+Bestehende App-Daten und der Zahlungsverlauf bleiben erhalten. Keine manuelle Migration erforderlich.`,
 
-Améliore également le mécanisme de repli des Lightning Address afin que les erreurs temporaires de transport DNS reviennent correctement à LNURL. Vérifié sur Docker, Umbrel et StartOS.`,
+    pl_PL: `Wprowadza Kontakty dla wielokrotnego użytku celów płatności Lightning, w tym Lightning Address, BOLT12 Offer, LNURL, BIP353, Nostr i Node ID.
+
+Dodaje wychodzące płatności Keysend, automatyczne dopasowywanie kontaktów w Lightning Activity, wyszukiwanie w całej historii transakcji, stronicowane ładowanie historii, ulepszoną obsługę metadanych płatności oraz liczne usprawnienia interfejsu.
+
+Istniejące dane aplikacji i historia płatności zostają zachowane. Ręczna migracja nie jest wymagana.`,
+
+    fr_FR: `Introduit les Contacts pour les destinations de paiement Lightning réutilisables, notamment Lightning Address, BOLT12 Offer, LNURL, BIP353, Nostr et Node ID.
+
+Ajoute les paiements Keysend sortants, l'association automatique des contacts dans Lightning Activity, la recherche dans l'ensemble de l'historique des transactions, le chargement paginé de l'historique, une meilleure gestion des métadonnées de paiement et de nombreuses améliorations de l'interface.
+
+Les données existantes de l'application et l'historique des paiements sont conservés. Aucune migration manuelle n'est nécessaire.`,
   },
 
   migrations: {
