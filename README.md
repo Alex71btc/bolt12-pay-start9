@@ -103,7 +103,7 @@ Bound on the `main` MultiHost over HTTP and not masked.
 
 **Which address this is reached at is not cosmetic here.** LNURL and Lightning Address require a _publicly resolvable_ host, because the sender's wallet — not the user's browser — has to fetch the well-known endpoint. A Tor or `.local` address works fine for the operator and cannot be used by anyone paying them. That is what [Set Primary URL](#actions) exists to settle, and why it only offers non-local addresses.
 
-For BIP353 TXT lookups, the application first uses the resolver configured inside the container. Only if that lookup returns NXDOMAIN, no answer, no nameservers, or a timeout does it retry the same lookup through Cloudflare's `1.1.1.1`. The service log records when this fallback is used and whether the fallback query succeeds. No other DNS lookup path is changed.
+For BIP353 TXT lookups, the application first uses the resolver configured inside the container. Only if that lookup returns NXDOMAIN, no answer, no nameservers, or a timeout does it retry the same lookup through Cloudflare DNS-over-HTTPS on port 443. The service log records when this fallback is used and whether the fallback query succeeds. No other DNS lookup path is changed.
 
 ## Installation and First-Run Flow
 
