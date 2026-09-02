@@ -39,6 +39,8 @@ LNURL, Lightning Address, and `.well-known` endpoints only resolve when BOLT12 P
 1. Give the **Web UI** a public address — a custom domain on clearnet, or a tunnel (e.g. the Cloudflare Tunnel package) if you can't forward ports.
 2. Run the **Set Primary URL** action and choose that public address. BOLT12 Pay uses it as the base for LNURL and Lightning Address. Pick a clearnet/custom-domain URL — Tor and `.local` addresses won't resolve for external senders. (You can still override the base in the app's admin settings.)
 
+If a BIP353 TXT lookup cannot be answered by the DNS resolver inside StartOS, BOLT12 Pay automatically retries that lookup through `1.1.1.1`. The service logs show when the fallback is used and whether it succeeds; no extra setup is required.
+
 For Tor or LAN-only use, BOLT12 offers and BOLT11 still work; only the public LNURL / Lightning Address flows need a public hostname.
 
 ### Domain configuration guide
