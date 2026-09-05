@@ -1,38 +1,48 @@
 import { VersionInfo } from '@start9labs/start-sdk'
 
-export const current = VersionInfo.of({
-  version: '0.3.2:0',
+export const v_0_3_4_0 = VersionInfo.of({
+  version: '0.3.4:0',
 
   releaseNotes: {
-    en_US: `Improves BIP353 DNS reliability with automatic detection and guided repair of missing public TXT records, plus manual verification of published Alias Manager and Offer History BIP353 addresses.
+    en_US: `BOLT12 Pay 0.3.4 improves BIP353 DNS reliability with a Cloudflare DNS-over-HTTPS fallback and clearer TXT repair handling.
 
-Fixes parsing of long Cloudflare TXT records split into multiple DNS strings, improves BIP353 and NWC diagnostics, and fixes Contacts modal scrolling and usability on mobile screens.
+Public Alias pages no longer create a BOLT11 invoice when opened or refreshed. A visitor can generate one optional fallback invoice when an older wallet requires it.
 
-Existing application data and payment history are preserved. No manual migration is required.`,
+Nostr notification keys and the private app signer are now encrypted with AES-256-GCM and unlocked automatically by LND after restarts. Existing plaintext keys are migrated automatically. Notifications use encrypted NIP-04 self-DMs through the relays saved with the Nostr Identity. The notification nsec can be replaced and a compromised app signer can be regenerated from the UI.
 
-    es_ES: `Mejora la fiabilidad DNS de BIP353 con detección automática y reparación guiada de registros TXT públicos ausentes, además de verificación manual de direcciones BIP353 publicadas desde Alias Manager y Offer History.
+The QR scanner has a larger mobile preview with smooth two-finger pinch-to-zoom, a visible zoom slider and tap-to-focus where supported. Unexpected HTML proxy responses now produce understandable errors. Existing application data and payment history are preserved. No manual migration is required.`,
 
-Corrige el análisis de registros TXT largos de Cloudflare divididos en varias cadenas DNS, mejora los diagnósticos de BIP353 y NWC y corrige el desplazamiento y la usabilidad del cuadro de Contactos en pantallas móviles.
+    de_DE: `BOLT12 Pay 0.3.4 verbessert die BIP353-DNS-Zuverlässigkeit durch einen Cloudflare-DNS-over-HTTPS-Fallback und eine verständlichere TXT-Reparatur.
 
-Los datos existentes de la aplicación y el historial de pagos se conservan. No se requiere migración manual.`,
+Öffentliche Alias-Seiten erzeugen beim Öffnen oder Aktualisieren keine BOLT11-Invoice mehr. Nur wenn eine ältere Wallet sie benötigt, kann der Besucher bewusst eine optionale Fallback-Invoice erzeugen.
 
-    de_DE: `Verbessert die Zuverlässigkeit von BIP353-DNS durch automatische Erkennung und geführte Reparatur fehlender öffentlicher TXT-Einträge sowie durch die manuelle Prüfung veröffentlichter BIP353-Adressen aus Alias Manager und Offer History.
+Nostr-Benachrichtigungsschlüssel und der private App-Signierer werden jetzt mit AES-256-GCM verschlüsselt und nach Neustarts automatisch durch LND entsperrt. Vorhandene Klartext-Schlüssel werden automatisch migriert. Benachrichtigungen werden als verschlüsselte NIP-04-Selbst-DMs über die mit der Nostr Identity gespeicherten Relays versendet. Der Notification-nsec kann ersetzt und ein kompromittierter App-Signierer in der Oberfläche neu erzeugt werden.
 
-Behebt die Verarbeitung langer, von Cloudflare in mehrere DNS-Strings aufgeteilter TXT-Einträge, verbessert die BIP353- und NWC-Diagnose und behebt Scroll- und Bedienprobleme des Kontakte-Fensters auf mobilen Bildschirmen.
+Der QR-Scanner besitzt eine größere mobile Vorschau mit flüssigem Zwei-Finger-Zoom, sichtbarem Zoomregler und Antippen zum Fokussieren, sofern unterstützt. Unerwartete HTML-Antworten eines Proxys werden verständlich erklärt. Bestehende App-Daten und der Zahlungsverlauf bleiben erhalten. Keine manuelle Migration erforderlich.`,
 
-Bestehende App-Daten und der Zahlungsverlauf bleiben erhalten. Keine manuelle Migration erforderlich.`,
+    es_ES: `BOLT12 Pay 0.3.4 mejora la fiabilidad DNS de BIP353 con un sistema alternativo DNS-over-HTTPS de Cloudflare y una reparación TXT más clara.
 
-    pl_PL: `Poprawia niezawodność DNS BIP353 dzięki automatycznemu wykrywaniu i prowadzonej naprawie brakujących publicznych rekordów TXT oraz ręcznej weryfikacji opublikowanych adresów BIP353 z Alias Manager i Offer History.
+Las páginas públicas de alias ya no crean una factura BOLT11 al abrirse o actualizarse. El visitante puede generar una factura alternativa opcional solo cuando una cartera antigua la necesite.
 
-Naprawia obsługę długich rekordów TXT Cloudflare podzielonych na wiele ciągów DNS, ulepsza diagnostykę BIP353 i NWC oraz poprawia przewijanie i obsługę okna Kontaktów na urządzeniach mobilnych.
+Las claves de notificación Nostr y el firmante privado de la aplicación se cifran ahora con AES-256-GCM y LND las desbloquea automáticamente después de los reinicios. Las claves existentes en texto sin cifrar se migran automáticamente. También se puede sustituir el nsec de notificación y regenerar un firmante comprometido desde la interfaz.
 
-Istniejące dane aplikacji i historia płatności zostają zachowane. Ręczna migracja nie jest wymagana.`,
+El escáner QR es más compacto en el escritorio, se ha mejorado el diseño móvil y las respuestas HTML inesperadas del proxy muestran errores comprensibles. Se conservan los datos y el historial de pagos. No se requiere migración manual.`,
 
-    fr_FR: `Améliore la fiabilité DNS de BIP353 grâce à la détection automatique et à la réparation guidée des enregistrements TXT publics manquants, ainsi qu'à la vérification manuelle des adresses BIP353 publiées depuis Alias Manager et Offer History.
+    fr_FR: `BOLT12 Pay 0.3.4 améliore la fiabilité DNS de BIP353 grâce à un mécanisme de secours DNS-over-HTTPS de Cloudflare et à une réparation TXT plus claire.
 
-Corrige l'analyse des longs enregistrements TXT Cloudflare divisés en plusieurs chaînes DNS, améliore les diagnostics BIP353 et NWC et corrige le défilement et l'utilisation de la fenêtre Contacts sur les écrans mobiles.
+Les pages publiques d'alias ne créent plus de facture BOLT11 à l'ouverture ou à l'actualisation. Le visiteur peut générer une facture de secours facultative uniquement lorsqu'un ancien portefeuille en a besoin.
 
-Les données existantes de l'application et l'historique des paiements sont conservés. Aucune migration manuelle n'est nécessaire.`,
+Les clés de notification Nostr et le signataire privé de l'application sont désormais chiffrés avec AES-256-GCM et déverrouillés automatiquement par LND après les redémarrages. Les clés existantes en clair sont migrées automatiquement. Le nsec de notification peut être remplacé et un signataire compromis peut être régénéré depuis l'interface.
+
+Le scanner QR est plus compact sur ordinateur, l'affichage mobile est amélioré et les réponses HTML inattendues du proxy produisent des erreurs compréhensibles. Les données et l'historique des paiements sont conservés. Aucune migration manuelle n'est nécessaire.`,
+
+    pl_PL: `BOLT12 Pay 0.3.4 poprawia niezawodność DNS dla BIP353 dzięki zapasowemu mechanizmowi Cloudflare DNS-over-HTTPS i czytelniejszej naprawie rekordów TXT.
+
+Publiczne strony aliasów nie tworzą już faktury BOLT11 przy otwarciu lub odświeżeniu. Użytkownik może wygenerować opcjonalną fakturę zapasową tylko wtedy, gdy wymaga jej starszy portfel.
+
+Klucze powiadomień Nostr oraz prywatny klucz podpisujący aplikacji są teraz szyfrowane za pomocą AES-256-GCM i automatycznie odblokowywane przez LND po ponownym uruchomieniu. Istniejące klucze zapisane jawnym tekstem są migrowane automatycznie. W interfejsie można również zastąpić nsec powiadomień i odtworzyć przejęty klucz podpisujący.
+
+Skaner QR jest bardziej kompaktowy na komputerze, poprawiono układ mobilny, a nieoczekiwane odpowiedzi HTML z proxy pokazują zrozumiałe błędy. Dane aplikacji i historia płatności pozostają zachowane. Ręczna migracja nie jest wymagana.`,
   },
 
   migrations: {
