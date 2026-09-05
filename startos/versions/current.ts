@@ -1,48 +1,48 @@
 import { VersionInfo } from '@start9labs/start-sdk'
 
-export const current = VersionInfo.of({
-  version: '0.3.2:2',
+export const v_0_3_4_0 = VersionInfo.of({
+  version: '0.3.4:0',
 
   releaseNotes: {
-    en_US: `Test build for BIP353 DNS resolution on StartOS.
+    en_US: `BOLT12 Pay 0.3.4 improves BIP353 DNS reliability with a Cloudflare DNS-over-HTTPS fallback and clearer TXT repair handling.
 
-The app now tries the normal container resolver first and retries the same BIP353 TXT lookup through Cloudflare DNS-over-HTTPS on port 443 only after NXDOMAIN, no answer, no nameservers, or a timeout. This uses the HTTPS path verified inside StartOS, because direct DNS traffic to 1.1.1.1 on port 53 is unavailable there. The service log reports when the fallback is used and whether it succeeds. Other DNS behavior is unchanged.
+Public Alias pages no longer create a BOLT11 invoice when opened or refreshed. A visitor can generate one optional fallback invoice when an older wallet requires it.
 
-The setup and console pages now show the BOLT12 Pay app version. The console also correctly labels the public BOLT12/BIP353 address instead of calling it an LNURL fallback.
+Nostr notification keys and the private app signer are now encrypted with AES-256-GCM and unlocked automatically by LND after restarts. Existing plaintext keys are migrated automatically. Notifications use encrypted NIP-04 self-DMs through the relays saved with the Nostr Identity. The notification nsec can be replaced and a compromised app signer can be regenerated from the UI.
 
-Existing application data and payment history are preserved. No manual migration is required.`,
+The QR scanner has a larger mobile preview with smooth two-finger pinch-to-zoom, a visible zoom slider and tap-to-focus where supported. Unexpected HTML proxy responses now produce understandable errors. Existing application data and payment history are preserved. No manual migration is required.`,
 
-    es_ES: `Versión de prueba para la resolución DNS de BIP353 en StartOS.
+    de_DE: `BOLT12 Pay 0.3.4 verbessert die BIP353-DNS-Zuverlässigkeit durch einen Cloudflare-DNS-over-HTTPS-Fallback und eine verständlichere TXT-Reparatur.
 
-La aplicación utiliza primero el resolvedor normal del contenedor y solo vuelve a intentar la misma consulta TXT de BIP353 mediante DNS-over-HTTPS de Cloudflare por el puerto 443 después de NXDOMAIN, ausencia de respuesta, ausencia de servidores de nombres o un tiempo de espera agotado. Se utiliza la ruta HTTPS verificada en StartOS, ya que allí no está disponible el tráfico DNS directo hacia 1.1.1.1 por el puerto 53. El registro del servicio indica cuándo se utiliza la alternativa y si funciona. El resto del comportamiento DNS no cambia.
+Öffentliche Alias-Seiten erzeugen beim Öffnen oder Aktualisieren keine BOLT11-Invoice mehr. Nur wenn eine ältere Wallet sie benötigt, kann der Besucher bewusst eine optionale Fallback-Invoice erzeugen.
 
-Las páginas de configuración y consola muestran ahora la versión de BOLT12 Pay. La consola también etiqueta correctamente la dirección pública BOLT12/BIP353 en lugar de llamarla alternativa LNURL.
+Nostr-Benachrichtigungsschlüssel und der private App-Signierer werden jetzt mit AES-256-GCM verschlüsselt und nach Neustarts automatisch durch LND entsperrt. Vorhandene Klartext-Schlüssel werden automatisch migriert. Benachrichtigungen werden als verschlüsselte NIP-04-Selbst-DMs über die mit der Nostr Identity gespeicherten Relays versendet. Der Notification-nsec kann ersetzt und ein kompromittierter App-Signierer in der Oberfläche neu erzeugt werden.
 
-Los datos existentes de la aplicación y el historial de pagos se conservan. No se requiere migración manual.`,
+Der QR-Scanner besitzt eine größere mobile Vorschau mit flüssigem Zwei-Finger-Zoom, sichtbarem Zoomregler und Antippen zum Fokussieren, sofern unterstützt. Unerwartete HTML-Antworten eines Proxys werden verständlich erklärt. Bestehende App-Daten und der Zahlungsverlauf bleiben erhalten. Keine manuelle Migration erforderlich.`,
 
-    de_DE: `Testversion für die BIP353-DNS-Auflösung unter StartOS.
+    es_ES: `BOLT12 Pay 0.3.4 mejora la fiabilidad DNS de BIP353 con un sistema alternativo DNS-over-HTTPS de Cloudflare y una reparación TXT más clara.
 
-Die App verwendet zuerst den normalen Resolver des Containers und wiederholt denselben BIP353-TXT-Lookup nur nach NXDOMAIN, fehlender Antwort, fehlenden Nameservern oder einem Timeout über Cloudflare DNS-over-HTTPS auf Port 443. Damit wird der unter StartOS erfolgreich geprüfte HTTPS-Weg genutzt, weil direkter DNS-Verkehr zu 1.1.1.1 auf Port 53 dort nicht verfügbar ist. Das Service-Log zeigt an, wann der Fallback verwendet wird und ob er erfolgreich ist. Das übrige DNS-Verhalten bleibt unverändert.
+Las páginas públicas de alias ya no crean una factura BOLT11 al abrirse o actualizarse. El visitante puede generar una factura alternativa opcional solo cuando una cartera antigua la necesite.
 
-Setup und Konsole zeigen jetzt die BOLT12-Pay-App-Version an. Außerdem bezeichnet die Konsole die öffentliche BOLT12-/BIP353-Adresse nun korrekt, statt sie als LNURL-Fallback zu beschriften.
+Las claves de notificación Nostr y el firmante privado de la aplicación se cifran ahora con AES-256-GCM y LND las desbloquea automáticamente después de los reinicios. Las claves existentes en texto sin cifrar se migran automáticamente. También se puede sustituir el nsec de notificación y regenerar un firmante comprometido desde la interfaz.
 
-Bestehende App-Daten und der Zahlungsverlauf bleiben erhalten. Keine manuelle Migration erforderlich.`,
+El escáner QR es más compacto en el escritorio, se ha mejorado el diseño móvil y las respuestas HTML inesperadas del proxy muestran errores comprensibles. Se conservan los datos y el historial de pagos. No se requiere migración manual.`,
 
-    pl_PL: `Wersja testowa rozwiązywania DNS BIP353 w StartOS.
+    fr_FR: `BOLT12 Pay 0.3.4 améliore la fiabilité DNS de BIP353 grâce à un mécanisme de secours DNS-over-HTTPS de Cloudflare et à une réparation TXT plus claire.
 
-Aplikacja najpierw używa standardowego resolwera kontenera i ponawia to samo zapytanie TXT BIP353 przez Cloudflare DNS-over-HTTPS na porcie 443 tylko po odpowiedzi NXDOMAIN, braku odpowiedzi, braku serwerów nazw lub przekroczeniu limitu czasu. Wykorzystywana jest ścieżka HTTPS sprawdzona w StartOS, ponieważ bezpośredni ruch DNS do 1.1.1.1 na porcie 53 nie jest tam dostępny. Dziennik usługi informuje o użyciu mechanizmu zapasowego i jego wyniku. Pozostałe zachowanie DNS nie ulega zmianie.
+Les pages publiques d'alias ne créent plus de facture BOLT11 à l'ouverture ou à l'actualisation. Le visiteur peut générer une facture de secours facultative uniquement lorsqu'un ancien portefeuille en a besoin.
 
-Strony konfiguracji i konsoli pokazują teraz wersję aplikacji BOLT12 Pay. Konsola prawidłowo opisuje też publiczny adres BOLT12/BIP353 zamiast nazywać go mechanizmem zapasowym LNURL.
+Les clés de notification Nostr et le signataire privé de l'application sont désormais chiffrés avec AES-256-GCM et déverrouillés automatiquement par LND après les redémarrages. Les clés existantes en clair sont migrées automatiquement. Le nsec de notification peut être remplacé et un signataire compromis peut être régénéré depuis l'interface.
 
-Istniejące dane aplikacji i historia płatności zostają zachowane. Ręczna migracja nie jest wymagana.`,
+Le scanner QR est plus compact sur ordinateur, l'affichage mobile est amélioré et les réponses HTML inattendues du proxy produisent des erreurs compréhensibles. Les données et l'historique des paiements sont conservés. Aucune migration manuelle n'est nécessaire.`,
 
-    fr_FR: `Version de test pour la résolution DNS BIP353 sous StartOS.
+    pl_PL: `BOLT12 Pay 0.3.4 poprawia niezawodność DNS dla BIP353 dzięki zapasowemu mechanizmowi Cloudflare DNS-over-HTTPS i czytelniejszej naprawie rekordów TXT.
 
-L'application utilise d'abord le résolveur normal du conteneur et ne relance la même requête TXT BIP353 via le DNS-over-HTTPS de Cloudflare sur le port 443 qu'après une réponse NXDOMAIN, une absence de réponse, une absence de serveurs de noms ou un délai d'attente dépassé. Elle utilise ainsi le chemin HTTPS vérifié sous StartOS, car le trafic DNS direct vers 1.1.1.1 sur le port 53 n'y est pas disponible. Le journal du service indique quand le mécanisme de secours est utilisé et s'il réussit. Les autres comportements DNS restent inchangés.
+Publiczne strony aliasów nie tworzą już faktury BOLT11 przy otwarciu lub odświeżeniu. Użytkownik może wygenerować opcjonalną fakturę zapasową tylko wtedy, gdy wymaga jej starszy portfel.
 
-Les pages de configuration et de console affichent désormais la version de BOLT12 Pay. La console identifie aussi correctement l'adresse publique BOLT12/BIP353 au lieu de la présenter comme solution de secours LNURL.
+Klucze powiadomień Nostr oraz prywatny klucz podpisujący aplikacji są teraz szyfrowane za pomocą AES-256-GCM i automatycznie odblokowywane przez LND po ponownym uruchomieniu. Istniejące klucze zapisane jawnym tekstem są migrowane automatycznie. W interfejsie można również zastąpić nsec powiadomień i odtworzyć przejęty klucz podpisujący.
 
-Les données existantes de l'application et l'historique des paiements sont conservés. Aucune migration manuelle n'est nécessaire.`,
+Skaner QR jest bardziej kompaktowy na komputerze, poprawiono układ mobilny, a nieoczekiwane odpowiedzi HTML z proxy pokazują zrozumiałe błędy. Dane aplikacji i historia płatności pozostają zachowane. Ręczna migracja nie jest wymagana.`,
   },
 
   migrations: {

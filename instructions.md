@@ -2,12 +2,12 @@
 
 ## Documentation
 
-- [lndk-pay on GitHub](https://github.com/Alex71btc/lndk-pay#-bolt12-pay) — the upstream project.
+- [BOLT12 Pay user guide](https://github.com/Alex71btc/lndk-pay/blob/main/README.md) — setup and upstream documentation.
 - [LNDK](https://github.com/lndk-org/lndk) — the BOLT12 runtime BOLT12 Pay embeds.
 
 ## What you get on StartOS
 
-- A **Web UI** for a self-hosted Lightning payment endpoint: create and pay **BOLT12 offers**, plus **LNURL**, **Lightning Address** (BIP353), and **BOLT11** support.
+- A **Web UI** for a self-hosted Lightning payment endpoint: create and pay **BOLT12 offers**, plus **LNURL**, **Lightning Address** (BIP353), and optional **BOLT11 fallback** support.
 - An embedded **LNDK** runtime that talks to your StartOS **LND** node to handle BOLT12 offers and payments.
 
 ## Before you start
@@ -65,3 +65,7 @@ The guide includes:
 ## Using BOLT12 Pay
 
 The Web UI is the application itself — create offers, generate payment pages, and manage LNURL / Lightning Address settings. The upstream documentation applies once you're in.
+
+Public Alias pages do not create BOLT11 invoices when someone opens or refreshes them. A visitor can generate one optional fallback invoice only if an older wallet needs it.
+
+If you enable Nostr Zap notifications, BOLT12 Pay encrypts the Notification nsec and private app signer. Your LND node unlocks them automatically after every StartOS, LND, or application restart; no extra password or manual unlock is required.
